@@ -1,0 +1,173 @@
+:root{
+  --ColorPrimario: #1B0206;
+  --FuentePrimaria: 'Roboto', sans-serif;
+  --FuenteSecundaria: 'Oswald', sans-serif;
+}
+
+/* Estilos Generales */
+body{
+  margin: 0;
+  padding: 0;
+  font-family: 'Roboto', sans-serif;
+
+}
+a{
+  text-decoration: none;
+}
+p, h1, ul{
+  margin: 0;
+  padding: 0;
+}
+li{
+  list-style: none;
+}
+.img-fluid {
+  max-width: 100%;
+  height: auto;
+}
+.p-0{
+  padding: 0!important;
+}
+
+/* Menu */
+.menu{
+  top: 5%;
+  position: absolute;
+  z-index: 100;
+  width: 100%;
+}
+.menu i{
+  color: white;
+  font-size: 1.5rem;
+}
+.menu .elemento-dos nav{
+  display: flex;
+  justify-content: flex-end;
+}
+.menu .elemento-dos nav a{
+  color: white;
+  padding: 0 25px;
+}
+
+
+/* Hero */
+.fondo-uno{
+  background: #1B0206;
+}
+.fondo-dos{
+  background: #31B3A9;
+}
+.hero .elemento-uno,
+.hero .elemento-dos{
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+.hero .elemento-unos{
+  background: #1B0206;
+}
+.hero .elemento-dos{
+  background: #4e9982;
+}
+.hero .elemento-uno{
+  position: relative;
+}
+@media(min-width:768px){
+  .hero .elemento-uno::after{
+      content: "Alien";
+      background: #a9473c;
+      color: white;
+      font-family: var(--FuenteSecundaria);
+      font-size: 2rem;
+      position: absolute;
+      height: 7rem;
+      width: 5.5rem;
+      top: 0;
+      right: -45px;
+      z-index: 100;
+      border-radius: 0px 0px 70px 70px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+  }
+}
+.hero .elemento-dos .especificaciones ul{
+  border-bottom: 1px solid black;
+}
+.hero .elemento-dos .especificaciones .row{
+  justify-content: center;
+}
+
+.hero .elemento-dos .especificaciones ul{
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  padding-bottom: 25px;
+}
+.hero .elemento-dos .especificaciones ul li{
+  color: white;
+  font-family: var(--FuenteSecundaria);
+  font-size: 1.5rem;
+  text-transform: uppercase;
+}
+.hero .elemento-dos .especificaciones ul li p{
+  font-family: var(--FuentePrimaria);
+  font-size: 0.7rem!important;
+  text-transform: none;
+}
+@media(min-width:1100px){
+  .hero .elemento-dos .especificaciones ul{
+      flex-direction: row;
+  }
+  .hero .elemento-dos .especificaciones ul li{
+      font-size: 2rem;
+  }
+  .hero .elemento-dos .especificaciones ul li p{
+      font-size: 1rem!important;
+  }
+}
+
+/** Formulario **/
+.hero .elemento-dos .formulario h1{
+  font-family: var(--FuenteSecundaria);
+  text-transform: uppercase;
+  font-size: 3rem;
+}
+.hero .elemento-dos .formulario p{
+  margin-bottom: 20px;
+}
+.hero .elemento-dos .formulario .row{
+  justify-content: center;
+}
+.hero .elemento-dos .form .row{
+  justify-content: center;
+}
+.hero .elemento-dos .form .form-text,
+.hero .elemento-dos .form textarea{
+  border: none;
+  width: 100%;
+  height: 3rem;
+  margin: 0 0 10px 0;
+  padding: 15px;
+  border-radius: 11px;
+  outline: none;
+}
+.hero .elemento-dos .form textarea{
+  height: 5rem!important;
+}
+.hero .elemento-dos .form .boton{
+  display: flex;
+  justify-content: flex-end;
+}
+.hero .elemento-dos .form a{
+  background: var(--ColorPrimario);
+  color: white;
+  padding: 10px 40px;
+  border-radius: 25px;
+  border: none;
+}
+
+
+
+
