@@ -12,21 +12,15 @@ class CreateMessageTest extends TestCase
     /** @test */
     public function a_invited_can_create_message()
     {
-        $message = factory(Message::class)->create();
-        // $message = [
-        //     'name' => 'mauricio',
-        //     'email' => 'mauricio@gmail.com',
-        //     'phone' => 7979,
-        //     'body' => 'mi testo'
-        // ];
+        $message = [
+            'name' => 'mauricio',
+            'email' => 'mauricio@gmail.com',
+            'phone' => 7979,
+            'body' => 'mi testo'
+        ];
 
-        $this->post(route('message.store', $message));
+        $this->post(route('message.store'), $message);
 
-        $this->assertDatabaseHas('messages', [
-            'name' => $message->name,
-            'phone' => $message->phone,
-            'email' => $message->email,
-            'body' => $message->body
-        ]);
+        $this->assertDatabaseHas('messages', $message);
     }
 }
