@@ -37,16 +37,16 @@ class ListMessagesTest extends TestCase
         $response->assertSuccessful();
         
         $response->assertJson([
-            'total' => 4
+            'meta' => ['total' => 4]
         ]);
 
         $response->assertJsonStructure([
-            'data', 'total', 'first_page_url', 'last_page_url'
+            'data', 'links' => ['prev', 'next']
         ]);
 
         $this->assertEquals(
-            $message4->id,
-            $response->json('data.0.id')
+            str_limit($message4->body, 100),
+            $response->json('data.0.body')
         );
     }
     
