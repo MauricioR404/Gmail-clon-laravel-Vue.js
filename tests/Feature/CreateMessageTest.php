@@ -2,7 +2,6 @@
 
 namespace Tests\Feature;
 
-use App\Message;
 use Tests\TestCase;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
@@ -23,4 +22,5 @@ class CreateMessageTest extends TestCase
 
         $this->assertDatabaseHas('messages', $message);
     }
+
 }

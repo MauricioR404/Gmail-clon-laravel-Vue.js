@@ -1,6 +1,6 @@
 <template>
   <div class="list-item">
-    <div class="row">
+    <div class="row" dusk="hover">
       <div class="col-md-2">
         <div>
           <ul class="iconos-uno">
@@ -39,7 +39,7 @@
                   d="M19,3H5C3.897,3,3,3.897,3,5v11c0,1.103,0.897,2,2,2h3.586L12,21.414L15.414,18H19c1.103,0,2-0.897,2-2V5 C21,3.897,20.103,3,19,3z M19,16h-4.414L12,18.586L9.414,16H5V5h14V16z" />
                 </svg>
             </li>
-            <li>
+            <li dusk="btn-delete" @click="deleteMessage()">
               <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
                 <path
                   d="M5 8v12c0 1.104.896 2 2 2h10c1.104 0 2-.896 2-2V8c0 0-.447 0-1 0H6C5.447 8 5 8 5 8zM3 6L8 6 16 6 21 6 21 4 16.618 4 15 2 9 2 7.382 4 3 4z" />
@@ -58,6 +58,18 @@ export default {
     message:{
       require: true
     }
-  }
+  },
+  methods: {
+    deleteMessage(){
+      axios.delete(`/message/${this.message.id}`)
+        .then(res => {
+          this.sessionMessage = res.data;
+          EventBus.$emit('message-session', 'El mensaje se elimino correctamente');
+        })
+        .catch(err => {
+          console.log(err.response.data);
+        });
+    }
+  },
 }
 </script>

@@ -14,6 +14,8 @@
           :message="message">
         </Messages-item>
         
+        <Message-session>
+        </Message-session>
       </div>
     </section>
   </div>
@@ -22,14 +24,19 @@
 <script>
 import Pagination from './Pagination';
 import MessagesItem from './MessageItem';
+import MessageSession from './MessageSession';
 
 export default {
-  components : { Pagination, MessagesItem },
+  components : { Pagination, MessagesItem, MessageSession },
   data() {
     return {
       messages: [],
-      pagination: [],
-      page: 1,
+      pagination: {
+        meta: {
+          from : ''
+        }
+      },
+      page: 1
     }
   },
   methods: {
@@ -50,7 +57,11 @@ export default {
     EventBus.$on("page", page => {
           this.page = page;
           this.listMessages();
-      });
+    });
+
+    EventBus.$on("message-session", session => {
+          this.listMessages();
+    });
   },
   
 }

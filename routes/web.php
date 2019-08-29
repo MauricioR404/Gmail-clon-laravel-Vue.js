@@ -11,6 +11,7 @@ Route::group([
 function () {
     Route::view('messages', 'message')->name('messages');
     Route::get('messages/index', 'MessageController@index')->name('messages.index');
+    Route::delete('message/{message}', 'MessageController@destroy')->name('message.delete');
 });
 
 Route::auth();

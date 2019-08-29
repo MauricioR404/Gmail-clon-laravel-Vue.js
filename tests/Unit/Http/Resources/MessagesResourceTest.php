@@ -18,6 +18,10 @@ class MessagesResourceTest extends TestCase
         $messageResourceTest = MessagesResource::make($message)->resolve();
 
         // dd($messageResourceTest);
+        $this->assertArrayHasKey(
+            'id', 
+            $messageResourceTest
+        );
 
         $this->assertArrayHasKey(
             'name', 

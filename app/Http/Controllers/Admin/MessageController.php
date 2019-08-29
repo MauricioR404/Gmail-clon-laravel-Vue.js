@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Message;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\MessagesResource;
-use App\Message;
 
 class MessageController extends Controller
 {
@@ -14,5 +14,12 @@ class MessageController extends Controller
         return MessagesResource::collection(
             Message::latest()->paginate(10)
         );
+    }
+
+    public function destroy(Message $message)
+    {
+        $message->delete();
+
+        return 'Mensaje Eliminado';
     }
 }
