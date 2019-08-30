@@ -17,7 +17,7 @@ class MessagesResourceTest extends TestCase
         
         $messageResourceTest = MessagesResource::make($message)->resolve();
 
-        // dd($messageResourceTest);
+        //  dd($messageResourceTest);
         $this->assertArrayHasKey(
             'id', 
             $messageResourceTest
@@ -30,6 +30,11 @@ class MessagesResourceTest extends TestCase
 
         $this->assertArrayHasKey(
             'body', 
+            $messageResourceTest
+        );
+
+        $this->assertArrayHasKey(
+            'state', 
             $messageResourceTest
         );
         

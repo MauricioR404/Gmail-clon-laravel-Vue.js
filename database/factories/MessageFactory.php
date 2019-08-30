@@ -10,6 +10,7 @@ $factory->define(Message::class, function (Faker $faker) {
         'name' => $faker->name,
         'email' => $faker->email,
         'phone' => $faker->phoneNumber,
+        'state' => 0,
         'body' => $faker->text()
     ];
 });

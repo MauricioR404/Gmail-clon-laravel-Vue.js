@@ -19,7 +19,10 @@ class MessageController extends Controller
     public function destroy(Message $message)
     {
         $message->delete();
+    }
 
-        return 'Mensaje Eliminado';
+    public function update(Message $message)
+    {
+        return $message->readOrUnread();
     }
 }

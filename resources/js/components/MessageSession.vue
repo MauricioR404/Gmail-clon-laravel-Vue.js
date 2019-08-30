@@ -21,7 +21,7 @@ export default {
         setTimeout(() => {
           this.message = '';
           this.addClass = '';
-        }, 3000);
+        }, 5000);
     });
   },
 }
@@ -36,10 +36,10 @@ export default {
     position: absolute;
     left: 11px;
     bottom: 10px;
-    padding: 17px;
+    padding: 18px;
     text-align: center;
     z-index: 1000;
-    width: 250px;
+    width: 300px;
     border-radius: 4px;
     box-shadow: 0 1px 3px 0 rgba(60,64,67,0.302), 0 4px 8px 3px rgba(60,64,67,0.149);
   }

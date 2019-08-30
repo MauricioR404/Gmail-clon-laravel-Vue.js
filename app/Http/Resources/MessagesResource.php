@@ -18,6 +18,7 @@ class MessagesResource extends JsonResource
             'id' => $this->id,
             'name' => str_limit($this->name, 10),
             'body' => str_limit($this->body, 100),
+            'state' => $this->state,
             'created_at' => $this->created_at->diffForHumans(),
         ];
     }
