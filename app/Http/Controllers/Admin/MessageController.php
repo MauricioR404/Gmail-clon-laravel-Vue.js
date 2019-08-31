@@ -21,8 +21,8 @@ class MessageController extends Controller
         $message->delete();
     }
 
-    public function update(Message $message)
+    public function update(Message $message, Request $update)
     {
-        return $message->readOrUnread();
+        return $message->updateMessage($update);
     }
 }

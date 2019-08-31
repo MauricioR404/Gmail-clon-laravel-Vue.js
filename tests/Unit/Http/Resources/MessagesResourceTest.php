@@ -37,6 +37,11 @@ class MessagesResourceTest extends TestCase
             'state', 
             $messageResourceTest
         );
+
+        $this->assertArrayHasKey(
+            'category_id', 
+            $messageResourceTest
+        );
         
         $this->assertArrayHasKey(
             'created_at', 

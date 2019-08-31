@@ -1974,6 +1974,12 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   props: {
     message: {
@@ -1991,13 +1997,21 @@ __webpack_require__.r(__webpack_exports__);
         console.log(err.response.data);
       });
     },
-    stateMessage: function stateMessage() {
+    updateMessage: function updateMessage(update) {
       var _this2 = this;
 
-      axios.get("/message/".concat(this.message.id, "/update")).then(function (res) {
-        _this2.message.state = res.data;
-        var message = _this2.message.state == 0 ? 'Se ha marcado el mensaje como no leído.' : 'Se ha marcado el mensaje como leído.';
-        EventBus.$emit('message-session', message);
+      axios.get("/message/".concat(this.message.id, "/").concat(update)).then(function (res) {
+        switch (update) {
+          case 'readOrUnread':
+            _this2.message.state = res.data;
+            var message = _this2.message.state == 0 ? 'Se ha marcado el mensaje como no leído.' : 'Se ha marcado el mensaje como leído.';
+            EventBus.$emit('message-session', message);
+            break;
+
+          case 'starred':
+            _this2.message.category_id = res.data;
+            break;
+        }
       })["catch"](function (err) {
         console.log(err.response);
       });
@@ -2006,6 +2020,9 @@ __webpack_require__.r(__webpack_exports__);
   computed: {
     showState: function showState() {
       return this.message.state == 1 ? 'showState' : '';
+    },
+    showStarred: function showStarred() {
+      return this.message.category_id == 1 ? 'showStarred' : '';
     }
   }
 });
@@ -6595,7 +6612,7 @@ exports = module.exports = __webpack_require__(/*! ../../../node_modules/css-loa
 
 
 // module
-exports.push([module.i, "\n.showState {\n  background: rgba(242, 245, 245, 0.8);\n}\n.read-,\n.unread-showState{\n  display: block;\n}\n.unread-,\n.read-showState{\n  display: none;\n}\n\n", ""]);
+exports.push([module.i, "\n.showState {\n  background: rgba(242, 245, 245, 0.8);\n}\n.unCheck-{\n  fill: #d9dbdb;\n  display: block;\n}\n.check-{\n  display: none;\n}\n.unCheck-showStarred{\n  display: none;\n}\n.check-showStarred {\n  display: block;\n  fill: #f8cb4e;\n}\n.read-,\n.unread-showState {\n  display: block;\n}\n.unread-,\n.read-showState {\n  display: none;\n}\n", ""]);
 
 // exports
 
@@ -38256,27 +38273,63 @@ var render = function() {
       _c("div", { staticClass: "col-md-2" }, [
         _c("div", [
           _c("ul", { staticClass: "iconos-uno" }, [
-            _c("li", { staticClass: "icono" }, [
-              _c(
-                "svg",
-                {
-                  attrs: {
-                    xmlns: "http://www.w3.org/2000/svg",
-                    width: "24",
-                    height: "24",
-                    viewBox: "0 0 24 24"
+            _c(
+              "li",
+              {
+                staticClass: "icono",
+                attrs: { dusk: "btn-starred" },
+                on: {
+                  click: function($event) {
+                    return _vm.updateMessage("starred")
                   }
-                },
-                [
-                  _c("path", {
+                }
+              },
+              [
+                _c(
+                  "svg",
+                  {
+                    class: ["unCheck-" + _vm.showStarred],
                     attrs: {
-                      d:
-                        "M6.516,14.323l-1.49,6.452c-0.092,0.399,0.068,0.814,0.406,1.047C5.603,21.94,5.801,22,6,22 c0.193,0,0.387-0.056,0.555-0.168L12,18.202l5.445,3.63c0.348,0.232,0.805,0.223,1.145-0.024c0.338-0.247,0.487-0.68,0.372-1.082 l-1.829-6.4l4.536-4.082c0.297-0.268,0.406-0.686,0.278-1.064c-0.129-0.378-0.47-0.644-0.868-0.676L15.378,8.05l-2.467-5.461 C12.75,2.23,12.393,2,12,2s-0.75,0.23-0.911,0.589L8.622,8.05L2.921,8.503C2.529,8.534,2.192,8.791,2.06,9.16 c-0.134,0.369-0.038,0.782,0.242,1.056L6.516,14.323z M9.369,9.997c0.363-0.029,0.683-0.253,0.832-0.586L12,5.43l1.799,3.981 c0.149,0.333,0.469,0.557,0.832,0.586l3.972,0.315l-3.271,2.944c-0.284,0.256-0.397,0.65-0.293,1.018l1.253,4.385l-3.736-2.491 c-0.336-0.225-0.773-0.225-1.109,0l-3.904,2.603l1.05-4.546c0.078-0.34-0.026-0.697-0.276-0.94l-3.038-2.962L9.369,9.997z"
+                      dusk: "unCheck",
+                      xmlns: "http://www.w3.org/2000/svg",
+                      width: "24",
+                      height: "24",
+                      viewBox: "0 0 24 24"
                     }
-                  })
-                ]
-              )
-            ]),
+                  },
+                  [
+                    _c("path", {
+                      attrs: {
+                        d:
+                          "M6.516,14.323l-1.49,6.452c-0.092,0.399,0.068,0.814,0.406,1.047C5.603,21.94,5.801,22,6,22 c0.193,0,0.387-0.056,0.555-0.168L12,18.202l5.445,3.63c0.348,0.232,0.805,0.223,1.145-0.024c0.338-0.247,0.487-0.68,0.372-1.082 l-1.829-6.4l4.536-4.082c0.297-0.268,0.406-0.686,0.278-1.064c-0.129-0.378-0.47-0.644-0.868-0.676L15.378,8.05l-2.467-5.461 C12.75,2.23,12.393,2,12,2s-0.75,0.23-0.911,0.589L8.622,8.05L2.921,8.503C2.529,8.534,2.192,8.791,2.06,9.16 c-0.134,0.369-0.038,0.782,0.242,1.056L6.516,14.323z M9.369,9.997c0.363-0.029,0.683-0.253,0.832-0.586L12,5.43l1.799,3.981 c0.149,0.333,0.469,0.557,0.832,0.586l3.972,0.315l-3.271,2.944c-0.284,0.256-0.397,0.65-0.293,1.018l1.253,4.385l-3.736-2.491 c-0.336-0.225-0.773-0.225-1.109,0l-3.904,2.603l1.05-4.546c0.078-0.34-0.026-0.697-0.276-0.94l-3.038-2.962L9.369,9.997z"
+                      }
+                    })
+                  ]
+                ),
+                _vm._v(" "),
+                _c(
+                  "svg",
+                  {
+                    class: ["check-" + _vm.showStarred],
+                    attrs: {
+                      dusk: "check",
+                      xmlns: "http://www.w3.org/2000/svg",
+                      width: "24",
+                      height: "24",
+                      viewBox: "0 0 24 24"
+                    }
+                  },
+                  [
+                    _c("path", {
+                      attrs: {
+                        d:
+                          "M21.947,9.179c-0.129-0.378-0.47-0.645-0.868-0.676L15.378,8.05l-2.467-5.461C12.75,2.23,12.393,2,12,2\ts-0.75,0.23-0.911,0.588L8.622,8.05L2.921,8.503C2.53,8.534,2.193,8.791,2.06,9.16s-0.039,0.782,0.242,1.056l4.213,4.107\tl-1.49,6.452c-0.092,0.399,0.069,0.814,0.406,1.047C5.603,21.94,5.801,22,6,22c0.193,0,0.387-0.056,0.555-0.168L12,18.202\tl5.445,3.63c0.348,0.232,0.805,0.223,1.145-0.024c0.338-0.247,0.487-0.68,0.372-1.082l-1.829-6.4l4.536-4.082\tC21.966,9.976,22.075,9.558,21.947,9.179z"
+                      }
+                    })
+                  ]
+                )
+              ]
+            ),
             _vm._v(" "),
             _c("li", [
               _c("p", { domProps: { textContent: _vm._s(_vm.message.name) } })
@@ -38303,7 +38356,7 @@ var render = function() {
                 attrs: { dusk: "btn-state" },
                 on: {
                   click: function($event) {
-                    return _vm.stateMessage()
+                    return _vm.updateMessage("readOrUnread")
                   }
                 }
               },
