@@ -1986,16 +1986,23 @@ __webpack_require__.r(__webpack_exports__);
       require: true
     }
   },
+  data: function data() {
+    return {
+      activeItem: false
+    };
+  },
   methods: {
-    deleteMessage: function deleteMessage() {
+    deleteMessage: function deleteMessage(message) {
       var _this = this;
 
-      axios["delete"]("/message/".concat(this.message.id)).then(function (res) {
-        _this.sessionMessage = res.data;
-        EventBus.$emit('message-session', 'El mensaje se elimino correctamente');
-      })["catch"](function (err) {
-        console.log(err.response.data);
-      });
+      if (this.activeItem == true || message == 'deleteAMessage') {
+        axios["delete"]("/message/".concat(this.message.id)).then(function (res) {
+          _this.sessionMessage = res.data;
+          EventBus.$emit('message-session', 'El mensaje se elimino correctamente');
+        })["catch"](function (err) {
+          console.log(err.response.data);
+        });
+      }
     },
     updateMessage: function updateMessage(update) {
       var _this2 = this;
@@ -2023,7 +2030,44 @@ __webpack_require__.r(__webpack_exports__);
     },
     showStarred: function showStarred() {
       return this.message.category_id == 1 ? 'showStarred' : '';
+    },
+    selectMessages: function selectMessages() {
+      return this.activeItem == true ? 'selectMessage' : '';
     }
+  },
+  mounted: function mounted() {
+    var _this3 = this;
+
+    EventBus.$on('select-messages', function (item) {
+      switch (item) {
+        case 'all':
+          _this3.activeItem = true;
+          break;
+
+        case 'none':
+          _this3.activeItem = false;
+          break;
+
+        case 'read':
+          _this3.message.state == 1 ? _this3.activeItem = true : _this3.activeItem = false;
+          break;
+
+        case 'unRead':
+          _this3.message.state == 0 ? _this3.activeItem = true : _this3.activeItem = false;
+          break;
+
+        case 'starred':
+          _this3.message.category_id == 1 ? _this3.activeItem = true : _this3.activeItem = false;
+          break;
+
+        case 'unStarred':
+          _this3.message.category_id == 0 ? _this3.activeItem = true : _this3.activeItem = false;
+          break;
+      }
+    });
+    EventBus.$on('delete-messages', function (messages) {
+      _this3.deleteMessage();
+    });
   }
 });
 
@@ -2105,6 +2149,34 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   props: {
     page: {
@@ -2114,7 +2186,18 @@ __webpack_require__.r(__webpack_exports__);
       required: true
     }
   },
+  data: function data() {
+    return {
+      active: false,
+      listItem: ['all', 'none', 'read', 'unRead', 'starred', 'unStarred'],
+      subMenu: false
+    };
+  },
   methods: {
+    deleteMessages: function deleteMessages() {
+      this.subMenu = false;
+      EventBus.$emit('delete-messages', 'delete');
+    },
     nextPage: function nextPage() {
       var page = this.page + 1;
       EventBus.$emit('page', page);
@@ -2122,14 +2205,35 @@ __webpack_require__.r(__webpack_exports__);
     previousPage: function previousPage() {
       var page = this.page - 1;
       EventBus.$emit('page', page);
+    },
+    activeList: function activeList() {
+      if (this.active == false) {
+        this.active = true;
+      } else {
+        this.active = false;
+      }
+    },
+    selectMessages: function selectMessages(item) {
+      this.active = false;
+
+      if (item == 'none') {
+        this.subMenu = false;
+      } else {
+        this.subMenu = true;
+      }
+
+      EventBus.$emit('select-messages', item);
     }
   },
   computed: {
     isNextButtonDisabled: function isNextButtonDisabled() {
-      return this.page == 4 ? 'd-none' : '';
+      return this.pagination.meta.current_page == this.pagination.meta.last_page ? 'd-none' : '';
     },
     isPreviousButtonDisabled: function isPreviousButtonDisabled() {
       return this.page == 1 ? 'd-none' : '';
+    },
+    addPadding: function addPadding() {
+      return this.subMenu == false ? 'padding' : '';
     }
   }
 });
@@ -6612,7 +6716,7 @@ exports = module.exports = __webpack_require__(/*! ../../../node_modules/css-loa
 
 
 // module
-exports.push([module.i, "\n.showState {\n  background: rgba(242, 245, 245, 0.8);\n}\n.unCheck-{\n  fill: #d9dbdb;\n  display: block;\n}\n.check-{\n  display: none;\n}\n.unCheck-showStarred{\n  display: none;\n}\n.check-showStarred {\n  display: block;\n  fill: #f8cb4e;\n}\n.read-,\n.unread-showState {\n  display: block;\n}\n.unread-,\n.read-showState {\n  display: none;\n}\n", ""]);
+exports.push([module.i, "\n.showState {\n  background: rgba(242, 245, 245, 0.8);\n}\n.unCheck-{\n  fill: #d9dbdb;\n  display: block;\n}\n.check-{\n  display: none;\n}\n.unCheck-showStarred{\n  display: none;\n}\n.check-showStarred {\n  display: block;\n  fill: #f8cb4e;\n}\n.read-,\n.unread-showState {\n  display: block;\n}\n.unread-,\n.read-showState {\n  display: none;\n}\n\n/* Effect of select*/\n.selectMessage{\n  background: #c2dbff;\n}\n\n", ""]);
 
 // exports
 
@@ -6650,7 +6754,7 @@ exports = module.exports = __webpack_require__(/*! ../../../node_modules/css-loa
 
 
 // module
-exports.push([module.i, "\n.box-header{\n  margin-top: 40px;\n}\n", ""]);
+exports.push([module.i, "\n.box-header {\n  margin-top: 40px;\n  padding: 0 !important;\n}\n.padding {\n  padding: 8px !important;\n}\n.active-list {\n  display: flex;\n  flex-direction: column;\n  justify-content: center;\n  padding: 15px 0px;\n  background: white;\n  height: 182px;\n  width: 149px;\n  position: absolute;\n  top: 30px;\n  border-radius: 5px;\n  z-index: 100;\n  webkit-box-shadow: 0 8px 10px 1px rgba(0, 0, 0, 0.14), 0 3px 14px 2px rgba(0, 0, 0, 0.12), 0 5px 5px -3px rgba(0, 0, 0, 0.2);\n  box-shadow: 0 8px 10px 1px rgba(0, 0, 0, 0.14), 0 3px 14px 2px rgba(0, 0, 0, 0.12), 0 5px 5px -3px rgba(0, 0, 0, 0.2);\n}\n.active-list .item {\n  padding: 5px 30px;\n}\n.active-list .item:hover {\n  background: #0000000a;\n}\n.select-options {\n  display: inline-flex;\n  justify-content: center;\n  align-items: center;\n}\nsvg {\n  fill: #767676;\n}\n.selection-options div svg {\n  margin: 0px 5px;\n}\n.select-options div {\n  padding: 10px;\n  display: flex;\n  justify-content: center;\n  align-items: center;\n}\n.select-options div:hover {\n  background: #8080802b;\n  border-radius: 50%;\n}\n", ""]);
 
 // exports
 
@@ -38268,180 +38372,184 @@ var render = function() {
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
-  return _c("div", { class: ["list-item", _vm.showState] }, [
-    _c("div", { staticClass: "row", attrs: { dusk: "hover" } }, [
-      _c("div", { staticClass: "col-md-2" }, [
-        _c("div", [
-          _c("ul", { staticClass: "iconos-uno" }, [
-            _c(
-              "li",
-              {
-                staticClass: "icono",
-                attrs: { dusk: "btn-starred" },
-                on: {
-                  click: function($event) {
-                    return _vm.updateMessage("starred")
+  return _c(
+    "div",
+    { class: ["list-item", _vm.showState, _vm.selectMessages] },
+    [
+      _c("div", { staticClass: "row", attrs: { dusk: "hover" } }, [
+        _c("div", { staticClass: "col-md-2" }, [
+          _c("div", [
+            _c("ul", { staticClass: "iconos-uno" }, [
+              _c(
+                "li",
+                {
+                  staticClass: "icono",
+                  attrs: { dusk: "btn-starred" },
+                  on: {
+                    click: function($event) {
+                      return _vm.updateMessage("starred")
+                    }
                   }
-                }
-              },
-              [
-                _c(
-                  "svg",
-                  {
-                    class: ["unCheck-" + _vm.showStarred],
-                    attrs: {
-                      dusk: "unCheck",
-                      xmlns: "http://www.w3.org/2000/svg",
-                      width: "24",
-                      height: "24",
-                      viewBox: "0 0 24 24"
-                    }
-                  },
-                  [
-                    _c("path", {
+                },
+                [
+                  _c(
+                    "svg",
+                    {
+                      class: ["unCheck-" + _vm.showStarred],
                       attrs: {
-                        d:
-                          "M6.516,14.323l-1.49,6.452c-0.092,0.399,0.068,0.814,0.406,1.047C5.603,21.94,5.801,22,6,22 c0.193,0,0.387-0.056,0.555-0.168L12,18.202l5.445,3.63c0.348,0.232,0.805,0.223,1.145-0.024c0.338-0.247,0.487-0.68,0.372-1.082 l-1.829-6.4l4.536-4.082c0.297-0.268,0.406-0.686,0.278-1.064c-0.129-0.378-0.47-0.644-0.868-0.676L15.378,8.05l-2.467-5.461 C12.75,2.23,12.393,2,12,2s-0.75,0.23-0.911,0.589L8.622,8.05L2.921,8.503C2.529,8.534,2.192,8.791,2.06,9.16 c-0.134,0.369-0.038,0.782,0.242,1.056L6.516,14.323z M9.369,9.997c0.363-0.029,0.683-0.253,0.832-0.586L12,5.43l1.799,3.981 c0.149,0.333,0.469,0.557,0.832,0.586l3.972,0.315l-3.271,2.944c-0.284,0.256-0.397,0.65-0.293,1.018l1.253,4.385l-3.736-2.491 c-0.336-0.225-0.773-0.225-1.109,0l-3.904,2.603l1.05-4.546c0.078-0.34-0.026-0.697-0.276-0.94l-3.038-2.962L9.369,9.997z"
+                        dusk: "unCheck",
+                        xmlns: "http://www.w3.org/2000/svg",
+                        width: "24",
+                        height: "24",
+                        viewBox: "0 0 24 24"
                       }
-                    })
-                  ]
-                ),
-                _vm._v(" "),
-                _c(
-                  "svg",
-                  {
-                    class: ["check-" + _vm.showStarred],
-                    attrs: {
-                      dusk: "check",
-                      xmlns: "http://www.w3.org/2000/svg",
-                      width: "24",
-                      height: "24",
-                      viewBox: "0 0 24 24"
-                    }
-                  },
-                  [
-                    _c("path", {
+                    },
+                    [
+                      _c("path", {
+                        attrs: {
+                          d:
+                            "M6.516,14.323l-1.49,6.452c-0.092,0.399,0.068,0.814,0.406,1.047C5.603,21.94,5.801,22,6,22 c0.193,0,0.387-0.056,0.555-0.168L12,18.202l5.445,3.63c0.348,0.232,0.805,0.223,1.145-0.024c0.338-0.247,0.487-0.68,0.372-1.082 l-1.829-6.4l4.536-4.082c0.297-0.268,0.406-0.686,0.278-1.064c-0.129-0.378-0.47-0.644-0.868-0.676L15.378,8.05l-2.467-5.461 C12.75,2.23,12.393,2,12,2s-0.75,0.23-0.911,0.589L8.622,8.05L2.921,8.503C2.529,8.534,2.192,8.791,2.06,9.16 c-0.134,0.369-0.038,0.782,0.242,1.056L6.516,14.323z M9.369,9.997c0.363-0.029,0.683-0.253,0.832-0.586L12,5.43l1.799,3.981 c0.149,0.333,0.469,0.557,0.832,0.586l3.972,0.315l-3.271,2.944c-0.284,0.256-0.397,0.65-0.293,1.018l1.253,4.385l-3.736-2.491 c-0.336-0.225-0.773-0.225-1.109,0l-3.904,2.603l1.05-4.546c0.078-0.34-0.026-0.697-0.276-0.94l-3.038-2.962L9.369,9.997z"
+                        }
+                      })
+                    ]
+                  ),
+                  _vm._v(" "),
+                  _c(
+                    "svg",
+                    {
+                      class: ["check-" + _vm.showStarred],
                       attrs: {
-                        d:
-                          "M21.947,9.179c-0.129-0.378-0.47-0.645-0.868-0.676L15.378,8.05l-2.467-5.461C12.75,2.23,12.393,2,12,2\ts-0.75,0.23-0.911,0.588L8.622,8.05L2.921,8.503C2.53,8.534,2.193,8.791,2.06,9.16s-0.039,0.782,0.242,1.056l4.213,4.107\tl-1.49,6.452c-0.092,0.399,0.069,0.814,0.406,1.047C5.603,21.94,5.801,22,6,22c0.193,0,0.387-0.056,0.555-0.168L12,18.202\tl5.445,3.63c0.348,0.232,0.805,0.223,1.145-0.024c0.338-0.247,0.487-0.68,0.372-1.082l-1.829-6.4l4.536-4.082\tC21.966,9.976,22.075,9.558,21.947,9.179z"
+                        dusk: "check",
+                        xmlns: "http://www.w3.org/2000/svg",
+                        width: "24",
+                        height: "24",
+                        viewBox: "0 0 24 24"
                       }
-                    })
-                  ]
-                )
-              ]
-            ),
-            _vm._v(" "),
-            _c("li", [
-              _c("p", { domProps: { textContent: _vm._s(_vm.message.name) } })
+                    },
+                    [
+                      _c("path", {
+                        attrs: {
+                          d:
+                            "M21.947,9.179c-0.129-0.378-0.47-0.645-0.868-0.676L15.378,8.05l-2.467-5.461C12.75,2.23,12.393,2,12,2\ts-0.75,0.23-0.911,0.588L8.622,8.05L2.921,8.503C2.53,8.534,2.193,8.791,2.06,9.16s-0.039,0.782,0.242,1.056l4.213,4.107\tl-1.49,6.452c-0.092,0.399,0.069,0.814,0.406,1.047C5.603,21.94,5.801,22,6,22c0.193,0,0.387-0.056,0.555-0.168L12,18.202\tl5.445,3.63c0.348,0.232,0.805,0.223,1.145-0.024c0.338-0.247,0.487-0.68,0.372-1.082l-1.829-6.4l4.536-4.082\tC21.966,9.976,22.075,9.558,21.947,9.179z"
+                        }
+                      })
+                    ]
+                  )
+                ]
+              ),
+              _vm._v(" "),
+              _c("li", [
+                _c("p", { domProps: { textContent: _vm._s(_vm.message.name) } })
+              ])
+            ])
+          ])
+        ]),
+        _vm._v(" "),
+        _c("div", { staticClass: "col-md-8" }, [
+          _c("p", { domProps: { textContent: _vm._s(_vm.message.body) } })
+        ]),
+        _vm._v(" "),
+        _c("div", { staticClass: "col-md-2" }, [
+          _c("p", {
+            staticClass: "fecha",
+            domProps: { textContent: _vm._s(_vm.message.created_at) }
+          }),
+          _vm._v(" "),
+          _c("div", { staticClass: "iconos" }, [
+            _c("ul", [
+              _c(
+                "li",
+                {
+                  attrs: { dusk: "btn-state" },
+                  on: {
+                    click: function($event) {
+                      return _vm.updateMessage("readOrUnread")
+                    }
+                  }
+                },
+                [
+                  _c(
+                    "svg",
+                    {
+                      class: ["read-" + _vm.showState],
+                      attrs: {
+                        xmlns: "http://www.w3.org/2000/svg",
+                        width: "24",
+                        height: "24",
+                        viewBox: "0 0 24 24"
+                      }
+                    },
+                    [
+                      _c("path", {
+                        attrs: {
+                          d:
+                            "M19,3H5C3.897,3,3,3.897,3,5v11c0,1.103,0.897,2,2,2h3.586L12,21.414L15.414,18H19c1.103,0,2-0.897,2-2V5 C21,3.897,20.103,3,19,3z M19,16h-4.414L12,18.586L9.414,16H5V5h14V16z"
+                        }
+                      })
+                    ]
+                  ),
+                  _vm._v(" "),
+                  _c(
+                    "svg",
+                    {
+                      class: ["unread-" + _vm.showState],
+                      attrs: {
+                        xmlns: "http://www.w3.org/2000/svg",
+                        width: "24",
+                        height: "24",
+                        viewBox: "0 0 24 24"
+                      }
+                    },
+                    [
+                      _c("path", {
+                        attrs: {
+                          d:
+                            "M18.999,3h-14c-1.103,0-2,0.897-2,2v11c0,1.103,0.897,2,2,2h3.5l3.5,4l3.5-4h3.5c1.103,0,2-0.897,2-2V5 C20.999,3.897,20.102,3,18.999,3z"
+                        }
+                      })
+                    ]
+                  )
+                ]
+              ),
+              _vm._v(" "),
+              _c(
+                "li",
+                {
+                  attrs: { dusk: "btn-delete" },
+                  on: {
+                    click: function($event) {
+                      return _vm.deleteMessage("deleteAMessage")
+                    }
+                  }
+                },
+                [
+                  _c(
+                    "svg",
+                    {
+                      attrs: {
+                        xmlns: "http://www.w3.org/2000/svg",
+                        width: "24",
+                        height: "24",
+                        viewBox: "0 0 24 24"
+                      }
+                    },
+                    [
+                      _c("path", {
+                        attrs: {
+                          d:
+                            "M5 8v12c0 1.104.896 2 2 2h10c1.104 0 2-.896 2-2V8c0 0-.447 0-1 0H6C5.447 8 5 8 5 8zM3 6L8 6 16 6 21 6 21 4 16.618 4 15 2 9 2 7.382 4 3 4z"
+                        }
+                      })
+                    ]
+                  )
+                ]
+              )
             ])
           ])
         ])
-      ]),
-      _vm._v(" "),
-      _c("div", { staticClass: "col-md-8" }, [
-        _c("p", { domProps: { textContent: _vm._s(_vm.message.body) } })
-      ]),
-      _vm._v(" "),
-      _c("div", { staticClass: "col-md-2" }, [
-        _c("p", {
-          staticClass: "fecha",
-          domProps: { textContent: _vm._s(_vm.message.created_at) }
-        }),
-        _vm._v(" "),
-        _c("div", { staticClass: "iconos" }, [
-          _c("ul", [
-            _c(
-              "li",
-              {
-                attrs: { dusk: "btn-state" },
-                on: {
-                  click: function($event) {
-                    return _vm.updateMessage("readOrUnread")
-                  }
-                }
-              },
-              [
-                _c(
-                  "svg",
-                  {
-                    class: ["read-" + _vm.showState],
-                    attrs: {
-                      xmlns: "http://www.w3.org/2000/svg",
-                      width: "24",
-                      height: "24",
-                      viewBox: "0 0 24 24"
-                    }
-                  },
-                  [
-                    _c("path", {
-                      attrs: {
-                        d:
-                          "M19,3H5C3.897,3,3,3.897,3,5v11c0,1.103,0.897,2,2,2h3.586L12,21.414L15.414,18H19c1.103,0,2-0.897,2-2V5 C21,3.897,20.103,3,19,3z M19,16h-4.414L12,18.586L9.414,16H5V5h14V16z"
-                      }
-                    })
-                  ]
-                ),
-                _vm._v(" "),
-                _c(
-                  "svg",
-                  {
-                    class: ["unread-" + _vm.showState],
-                    attrs: {
-                      xmlns: "http://www.w3.org/2000/svg",
-                      width: "24",
-                      height: "24",
-                      viewBox: "0 0 24 24"
-                    }
-                  },
-                  [
-                    _c("path", {
-                      attrs: {
-                        d:
-                          "M18.999,3h-14c-1.103,0-2,0.897-2,2v11c0,1.103,0.897,2,2,2h3.5l3.5,4l3.5-4h3.5c1.103,0,2-0.897,2-2V5 C20.999,3.897,20.102,3,18.999,3z"
-                      }
-                    })
-                  ]
-                )
-              ]
-            ),
-            _vm._v(" "),
-            _c(
-              "li",
-              {
-                attrs: { dusk: "btn-delete" },
-                on: {
-                  click: function($event) {
-                    return _vm.deleteMessage()
-                  }
-                }
-              },
-              [
-                _c(
-                  "svg",
-                  {
-                    attrs: {
-                      xmlns: "http://www.w3.org/2000/svg",
-                      width: "24",
-                      height: "24",
-                      viewBox: "0 0 24 24"
-                    }
-                  },
-                  [
-                    _c("path", {
-                      attrs: {
-                        d:
-                          "M5 8v12c0 1.104.896 2 2 2h10c1.104 0 2-.896 2-2V8c0 0-.447 0-1 0H6C5.447 8 5 8 5 8zM3 6L8 6 16 6 21 6 21 4 16.618 4 15 2 9 2 7.382 4 3 4z"
-                      }
-                    })
-                  ]
-                )
-              ]
-            )
-          ])
-        ])
       ])
-    ])
-  ])
+    ]
+  )
 }
 var staticRenderFns = []
 render._withStripped = true
@@ -38493,41 +38601,108 @@ var render = function() {
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
-  return _c("div", { staticClass: "box-header" }, [
-    _c("div", { staticClass: "selection-all" }, [
-      _c(
-        "svg",
-        {
-          attrs: {
-            xmlns: "http://www.w3.org/2000/svg",
-            width: "24",
-            height: "24",
-            viewBox: "0 0 24 24"
+  return _c("div", { class: ["box-header", _vm.addPadding] }, [
+    _c(
+      "div",
+      {
+        staticClass: "selection-all",
+        on: {
+          click: function($event) {
+            return _vm.activeList()
           }
-        },
-        [
-          _c("path", {
+        }
+      },
+      [
+        _c(
+          "svg",
+          {
             attrs: {
-              d:
-                "M7,5C5.897,5,5,5.897,5,7v10c0,1.103,0.897,2,2,2h10c1.103,0,2-0.897,2-2V7c0-1.103-0.897-2-2-2H7z M7,17V7h10l0.002,10H7z"
+              xmlns: "http://www.w3.org/2000/svg",
+              width: "24",
+              height: "24",
+              viewBox: "0 0 24 24"
             }
-          })
-        ]
-      ),
-      _vm._v(" "),
-      _c(
-        "svg",
-        {
-          attrs: {
-            xmlns: "http://www.w3.org/2000/svg",
-            width: "24",
-            height: "15",
-            viewBox: "0 0 24 24"
-          }
-        },
-        [_c("path", { attrs: { d: "M11.998 17L18.998 9 4.998 9z" } })]
-      )
-    ]),
+          },
+          [
+            _c("path", {
+              attrs: {
+                d:
+                  "M7,5C5.897,5,5,5.897,5,7v10c0,1.103,0.897,2,2,2h10c1.103,0,2-0.897,2-2V7c0-1.103-0.897-2-2-2H7z M7,17V7h10l0.002,10H7z"
+              }
+            })
+          ]
+        ),
+        _vm._v(" "),
+        _c(
+          "svg",
+          {
+            attrs: {
+              xmlns: "http://www.w3.org/2000/svg",
+              width: "24",
+              height: "15",
+              viewBox: "0 0 24 24"
+            }
+          },
+          [_c("path", { attrs: { d: "M11.998 17L18.998 9 4.998 9z" } })]
+        )
+      ]
+    ),
+    _vm._v(" "),
+    _vm.active == true
+      ? _c(
+          "div",
+          { staticClass: "active-list" },
+          _vm._l(_vm.listItem, function(item) {
+            return _c("div", {
+              key: item.id,
+              staticClass: "item",
+              domProps: { textContent: _vm._s(item) },
+              on: {
+                click: function($event) {
+                  return _vm.selectMessages(item)
+                }
+              }
+            })
+          }),
+          0
+        )
+      : _vm._e(),
+    _vm._v(" "),
+    _vm.subMenu == true
+      ? _c("div", { staticClass: "select-options" }, [
+          _c(
+            "div",
+            {
+              on: {
+                click: function($event) {
+                  return _vm.deleteMessages()
+                }
+              }
+            },
+            [
+              _c(
+                "svg",
+                {
+                  attrs: {
+                    xmlns: "http://www.w3.org/2000/svg",
+                    width: "22",
+                    height: "24",
+                    viewBox: "0 0 24 24"
+                  }
+                },
+                [
+                  _c("path", {
+                    attrs: {
+                      d:
+                        "M5 8v12c0 1.104.896 2 2 2h10c1.104 0 2-.896 2-2V8c0 0-.447 0-1 0H6C5.447 8 5 8 5 8zM3 6L8 6 16 6 21 6 21 4 16.618 4 15 2 9 2 7.382 4 3 4z"
+                    }
+                  })
+                ]
+              )
+            ]
+          )
+        ])
+      : _vm._e(),
     _vm._v(" "),
     _c("div", { staticClass: "box-tools pull-right" }, [
       _c("div", { staticClass: "all-messages" }, [

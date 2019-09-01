@@ -1,5 +1,5 @@
 <template>
-  <div :class="['list-item', showState]">
+  <div :class="['list-item', showState, selectMessages]">
     <div class="row" dusk="hover">
       <div class="col-md-2">
         <div>
@@ -42,7 +42,7 @@
                   d="M18.999,3h-14c-1.103,0-2,0.897-2,2v11c0,1.103,0.897,2,2,2h3.5l3.5,4l3.5-4h3.5c1.103,0,2-0.897,2-2V5 C20.999,3.897,20.102,3,18.999,3z" />
               </svg>
             </li>
-            <li dusk="btn-delete" @click="deleteMessage()">
+            <li dusk="btn-delete" @click="deleteMessage('deleteAMessage')">
               <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
                 <path
                   d="M5 8v12c0 1.104.896 2 2 2h10c1.104 0 2-.896 2-2V8c0 0-.447 0-1 0H6C5.447 8 5 8 5 8zM3 6L8 6 16 6 21 6 21 4 16.618 4 15 2 9 2 7.382 4 3 4z" />
@@ -62,9 +62,15 @@
         require: true
       }
     },
+    data() {
+      return {
+        activeItem: false,
+      }
+    },
     methods: {
-      deleteMessage() {
-        axios.delete(`/message/${this.message.id}`)
+      deleteMessage(message) {
+        if(this.activeItem == true || message == 'deleteAMessage'){
+          axios.delete(`/message/${this.message.id}`)
           .then(res => {
             this.sessionMessage = res.data;
             EventBus.$emit('message-session', 'El mensaje se elimino correctamente');
@@ -72,6 +78,7 @@
           .catch(err => {
             console.log(err.response.data);
           });
+        }
       },
       updateMessage(update) {
         axios.get(`/message/${this.message.id}/${update}`)
@@ -82,7 +89,6 @@
                 const message = this.message.state == 0 ? 'Se ha marcado el mensaje como no leído.' : 'Se ha marcado el mensaje como leído.';
                 EventBus.$emit('message-session', message);
                 break;
-            
               case 'starred':
                 this.message.category_id = res.data;
                 break;
@@ -91,7 +97,7 @@
           .catch(err => {
             console.log(err.response);
           });
-      }
+      },
     },
     computed: {
       showState() {
@@ -99,9 +105,40 @@
       },
       showStarred() {
         return this.message.category_id == 1 ? 'showStarred' : '';
-      }
+      },
+      selectMessages(){
+        return this.activeItem == true ? 'selectMessage' : '';
+      },
 
-    }
+    },
+    mounted() {
+      EventBus.$on('select-messages', item => {
+          switch (item) {
+            case 'all':
+              this.activeItem = true;
+              break;
+            case 'none':
+              this.activeItem = false;
+              break;
+            case 'read':
+              this.message.state == 1 ? this.activeItem = true : this.activeItem = false;
+              break;
+            case 'unRead':
+              this.message.state == 0 ? this.activeItem = true : this.activeItem = false;
+              break;
+            case 'starred':
+              this.message.category_id == 1 ? this.activeItem = true : this.activeItem = false;
+              break;
+            case 'unStarred':
+              this.message.category_id == 0 ? this.activeItem = true : this.activeItem = false;
+              break;
+          }
+        });
+
+      EventBus.$on('delete-messages', messages =>{
+          this.deleteMessage();
+      });
+    },
   }
 </script>
 
@@ -137,4 +174,10 @@
   .read-showState {
     display: none;
   }
+
+  /* Effect of select*/
+  .selectMessage{
+    background: #c2dbff;
+  }
+
 </style>

@@ -1,16 +1,43 @@
 <template>
-  <div class="box-header">
-    <div class="selection-all">
+  <div :class="['box-header', addPadding]">
+    <!-- selection -->
+    <div class="selection-all" @click="activeList()">
       <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
         <path
           d="M7,5C5.897,5,5,5.897,5,7v10c0,1.103,0.897,2,2,2h10c1.103,0,2-0.897,2-2V7c0-1.103-0.897-2-2-2H7z M7,17V7h10l0.002,10H7z" />
-        </svg>
+      </svg>
       <svg xmlns="http://www.w3.org/2000/svg" width="24" height="15" viewBox="0 0 24 24">
         <path d="M11.998 17L18.998 9 4.998 9z" /></svg>
     </div>
+    <!-- end-selection -->
+
+    <!-- selection-options -->
+    <div class="active-list" v-if="active == true">
+      <div v-for="item in listItem" :key="item.id" v-text="item" @click="selectMessages(item)" class="item">
+      </div>
+    </div>
+    <!-- end-selection-options -->
+    
+    <!-- subMenu -->
+    <div class="select-options" v-if="subMenu == true">
+      <div @click="deleteMessages()">
+        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="24" viewBox="0 0 24 24">
+          <path
+            d="M5 8v12c0 1.104.896 2 2 2h10c1.104 0 2-.896 2-2V8c0 0-.447 0-1 0H6C5.447 8 5 8 5 8zM3 6L8 6 16 6 21 6 21 4 16.618 4 15 2 9 2 7.382 4 3 4z" />
+          </svg>
+      </div>
+      <!-- <div>
+        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="24" viewBox="0 0 24 24">
+          <path
+            d="M18.999,3h-14c-1.103,0-2,0.897-2,2v11c0,1.103,0.897,2,2,2h3.5l3.5,4l3.5-4h3.5c1.103,0,2-0.897,2-2V5 C20.999,3.897,20.102,3,18.999,3z" />
+          </svg>
+      </div> -->
+    </div>
+    <!-- end-subMenu -->
+
+   <!-- next-or-previous -->
     <div class="box-tools pull-right">
       <div class="all-messages">
-        <!-- <p>{{ page }}</p> -- -->
         <p>{{ pagination.meta.from }} - {{ pagination.meta.to }} de {{ pagination.meta.total }}</p>
       </div>
       <div :class="['efecto-icono', isPreviousButtonDisabled]" @click="previousPage()">
@@ -22,44 +49,131 @@
           <path d="M10.707 17.707L16.414 12 10.707 6.293 9.293 7.707 13.586 12 9.293 16.293z" /></svg>
       </div>
     </div>
+    <!-- end-next-or-previous -->
   </div>
 </template>
 
 <script>
-export default {
-  props: {
-    page: {
-      required: true
+  export default {
+    props: {
+      page: {
+        required: true
+      },
+      pagination: {
+        required: true
+      }
     },
-    pagination : {
-      required: true
-    }
-  },
-  methods: {
-    nextPage(){
-      const page = this.page + 1;
-      EventBus.$emit('page', page);
+    data() {
+      return {
+        active: false,
+        listItem: ['all', 'none', 'read', 'unRead', 'starred', 'unStarred'],
+        subMenu: false
+      }
     },
-    previousPage(){
-      const page = this.page - 1;
-      EventBus.$emit('page', page);
-    },
-    
-  },
-  computed: {
-    isNextButtonDisabled(){
-      return this.page == 4 ? 'd-none' : '';
-    },
-    isPreviousButtonDisabled(){
-      return this.page == 1 ? 'd-none' : '';
-    }
-  },
+    methods: {
+      deleteMessages(){
+        this.subMenu = false;
+        EventBus.$emit('delete-messages', 'delete');
+      },
+      nextPage() {
+        const page = this.page + 1;
+        EventBus.$emit('page', page);
+      },
+      previousPage() {
+        const page = this.page - 1;
+        EventBus.$emit('page', page);
+      },
+      activeList() {
+        if (this.active == false) {
+          this.active = true;
+        } else {
+          this.active = false;
+        }
+      },
+      selectMessages(item) {
+        this.active = false;
+        if (item == 'none') {
+          this.subMenu = false;
+        } else {
+          this.subMenu = true;
+        }
 
-}
+        EventBus.$emit('select-messages', item);
+      }
+
+    },
+    computed: {
+      isNextButtonDisabled() {
+        return this.pagination.meta.current_page == this.pagination.meta.last_page ? 'd-none' : '';
+      },
+      isPreviousButtonDisabled() {
+        return this.page == 1 ? 'd-none' : '';
+      },
+      addPadding() {
+        return this.subMenu == false ? 'padding' : '';
+      }
+    },
+
+  }
 </script>
 
 <style>
-  .box-header{
+  .box-header {
     margin-top: 40px;
+    padding: 0 !important;
+  }
+
+  .padding {
+    padding: 8px !important;
+  }
+
+  .active-list {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 15px 0px;
+    background: white;
+    height: 182px;
+    width: 149px;
+    position: absolute;
+    top: 30px;
+    border-radius: 5px;
+    z-index: 100;
+    webkit-box-shadow: 0 8px 10px 1px rgba(0, 0, 0, 0.14), 0 3px 14px 2px rgba(0, 0, 0, 0.12), 0 5px 5px -3px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 8px 10px 1px rgba(0, 0, 0, 0.14), 0 3px 14px 2px rgba(0, 0, 0, 0.12), 0 5px 5px -3px rgba(0, 0, 0, 0.2);
+  }
+
+  .active-list .item {
+    padding: 5px 30px;
+  }
+
+  .active-list .item:hover {
+    background: #0000000a;
+  }
+
+  .select-options {
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  svg {
+    fill: #767676;
+  }
+
+  .selection-options div svg {
+    margin: 0px 5px;
+  }
+
+  .select-options div {
+    padding: 10px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .select-options div:hover {
+    background: #8080802b;
+    border-radius: 50%;
   }
 </style>
