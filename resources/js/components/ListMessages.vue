@@ -1,4 +1,5 @@
 <template>
+<div class="content-wrapper">
   <div>
     <section class="content">
       <div class="box">
@@ -24,6 +25,7 @@
       </div>
     </section>
   </div>
+</div>
 </template>
  
 <script>
@@ -45,15 +47,17 @@ export default {
       page: 1,
       showMessages: true,
       show: false,
+      category: 'all'
     }
   },
   methods: {
     listMessages(){
-      axios.get(`/messages/index?page=${this.page}`)
+      axios.get(`/messages/index/${this.category}?page=${this.page}`)
         .then(res => {
           this.messages = res.data.data;
           this.pagination = res.data;
           delete this.pagination.data;
+          EventBus.$emit('active-category', this.category, res.data.meta.total);
         })
         .catch(err => {
           console.log(err.response.data);
@@ -62,6 +66,11 @@ export default {
   },
   mounted() {
     this.listMessages();
+    EventBus.$on('list-messages', category => {
+        this.category = category;
+        this.listMessages();
+    });
+
     EventBus.$on("page", page => {
           this.page = page;
           this.listMessages();

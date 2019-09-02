@@ -1,26 +1,15 @@
 @extends('layout.app')
 
 @section('content')
-<list-messages></list-messages>
+
+  <list-aside></list-aside>
+
+  <list-messages></list-messages>
 @endsection
 
 
 @push('styles')
     <style>
-      .sidebar-menu  li{
-        background: #fce8e6;
-        border-radius: 0 20px 20px 0;
-      }
-      
-      .skin-blue .sidebar-menu > li:hover > a{
-        background: #fce8e6!important;
-        border-radius: 0 20px 20px 0;
-      }
-
-      .sidebar-menu a{
-        color: #d93025!important;
-      }
-
       /* Header */
       .main-header .logo{
         background-color: white!important;

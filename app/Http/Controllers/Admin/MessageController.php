@@ -9,10 +9,10 @@ use App\Http\Resources\MessagesResource;
 
 class MessageController extends Controller
 {
-    public function index()
+    public function index(Request $list)
     {   
         return MessagesResource::collection(
-            Message::latest()->paginate(10)
+            Message::listMessages($list)
         );
     }
 

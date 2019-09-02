@@ -8,6 +8,23 @@ class Message extends Model
 {
     protected $fillable = ['name', 'email', 'body', 'phone', 'state', 'category_id'];
 
+
+    public static function listMessages($list)
+    {
+        switch ($list->category){
+            case 'all':
+                return static::latest()->paginate(10);
+                break;
+            case 'starred':
+                return static::where('category_id', 1)->latest()->paginate(10);
+                break;
+            default : 
+                return static::latest()->paginate(10);
+                break;
+            }
+    }
+
+
     public function updateMessage($update)
     {
         switch ($update->update) {
