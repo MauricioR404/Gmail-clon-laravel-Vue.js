@@ -11,6 +11,6 @@ $factory->define(Message::class, function (Faker $faker) {
         'email' => $faker->email,
         'phone' => $faker->phoneNumber,
         'state' => 0,
-        'body' => $faker->text()
+        'body' => $faker->realText($maxNbChars = 1000,$indexSize = 2)
     ];
 });

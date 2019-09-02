@@ -3,16 +3,21 @@
     <section class="content">
       <div class="box">
 
-        <Pagination 
+        <pagination 
           :page="page" 
           :pagination="pagination">
-        </Pagination>
+        </pagination>
         
-        <Messages-item
-          v-for="message in messages"
+        <messages-item
+           v-for="message in messages"
+           v-show="showMessages == true"
           :key="message.id"
           :message="message">
-        </Messages-item>
+        </messages-item>
+
+        <show-message
+          v-show="show == true">
+        </show-message>
         
         <Message-session>
         </Message-session>
@@ -25,9 +30,10 @@
 import Pagination from './Pagination';
 import MessagesItem from './MessageItem';
 import MessageSession from './MessageSession';
+import ShowMessage from './ShowMessage';
 
 export default {
-  components : { Pagination, MessagesItem, MessageSession },
+  components : { Pagination, MessagesItem, MessageSession, ShowMessage },
   data() {
     return {
       messages: [],
@@ -36,7 +42,9 @@ export default {
           from : ''
         }
       },
-      page: 1
+      page: 1,
+      showMessages: true,
+      show: false,
     }
   },
   methods: {
@@ -61,6 +69,11 @@ export default {
 
     EventBus.$on("message-session", session => {
           this.listMessages();
+    });
+
+    EventBus.$on('show-message', message => {
+      this.showMessages == true ? this.showMessages = false : this.showMessages = true;
+      this.show == false ? this.show = true : this.show = false;
     });
   },
   

@@ -1,6 +1,7 @@
 <template>
   <div :class="['list-item', showState, selectMessages]">
     <div class="row" dusk="hover">
+      <!-- name-icons-starred-->
       <div class="col-md-2">
         <div>
           <ul class="iconos-uno">
@@ -23,9 +24,15 @@
           </ul>
         </div>
       </div>
-      <div class="col-md-8">
+      <!-- end-name-icons-starred-->
+
+      <!-- body-->
+      <div class="col-md-8" dusk="btn-show" @click="showMessage()">
         <p v-text="message.body"></p>
       </div>
+      <!-- end-body-->
+
+      <!-- date-icons-delete-readOrUnread-->
       <div class="col-md-2">
         <p class="fecha" v-text="message.created_at"></p>
         <div class="iconos">
@@ -51,6 +58,7 @@
           </ul>
         </div>
       </div>
+      <!-- end-date-icons-delete-readOrUnread-->
     </div>
   </div>
 </template>
@@ -98,6 +106,9 @@
             console.log(err.response);
           });
       },
+      showMessage(){
+        EventBus.$emit('show-message', this.message.id);
+      }
     },
     computed: {
       showState() {
